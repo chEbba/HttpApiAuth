@@ -15,7 +15,7 @@ namespace Che\HttpApiAuth;
  * @author Kirill chEbba Chebunin <iam@chebba.org>
  * @license http://opensource.org/licenses/mit-license.php MIT
  */
-interface AuthorizationScheme
+interface AuthenticationScheme
 {
     /**
      * Get scheme name

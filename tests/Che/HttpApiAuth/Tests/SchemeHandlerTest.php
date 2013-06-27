@@ -5,8 +5,8 @@
 
 namespace Che\HttpApiAuth\Tests;
 
-use Che\HttpApiAuth\AuthorizationData;
-use Che\HttpApiAuth\AuthorizationScheme;
+use Che\HttpApiAuth\AuthenticationData;
+use Che\HttpApiAuth\AuthenticationScheme;
 use Che\HttpApiAuth\HeaderNotFoundException;
 use Che\HttpApiAuth\HttpRequest;
 use Che\HttpApiAuth\SchemeHandler;
@@ -196,7 +196,7 @@ class SchemeHandlerTest extends TestCase
             ->will($this->returnValue(true))
         ;
 
-        $this->assertTrue($this->handler->isRequestValid($request, new AuthorizationData('Foo', $token), 'secret'));
+        $this->assertTrue($this->handler->isRequestValid($request, new AuthenticationData('Foo', $token), 'secret'));
     }
 
     /**
@@ -208,7 +208,7 @@ class SchemeHandlerTest extends TestCase
         $token = $this->createToken();
 
         try {
-            $this->handler->isRequestValid($request, new AuthorizationData('Foo', $token), 'secret');
+            $this->handler->isRequestValid($request, new AuthenticationData('Foo', $token), 'secret');
         } catch (\OutOfBoundsException $e) {
             return;
         }
@@ -233,7 +233,7 @@ class SchemeHandlerTest extends TestCase
         ;
 
         try {
-            $this->handler->isRequestValid($request, new AuthorizationData('Foo', $token), 'secret');
+            $this->handler->isRequestValid($request, new AuthenticationData('Foo', $token), 'secret');
         } catch (UnsupportedTokenException $e) {
             $this->assertSame($expectedException, $e);
             return;
@@ -312,11 +312,11 @@ class SchemeHandlerTest extends TestCase
      * @param string      $name
      * @param string|null $customName
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|AuthorizationScheme
+     * @return \PHPUnit_Framework_MockObject_MockObject|AuthenticationScheme
      */
     protected function createScheme($name, $customName = null)
     {
-        $scheme = $this->getMock('Che\HttpApiAuth\AuthorizationScheme');
+        $scheme = $this->getMock('Che\HttpApiAuth\AuthenticationScheme');
         $scheme
             ->expects($this->any())
             ->method('getName')

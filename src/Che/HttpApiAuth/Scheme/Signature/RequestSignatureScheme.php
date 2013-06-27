@@ -9,7 +9,7 @@
 
 namespace Che\HttpApiAuth\Scheme\Signature;
 
-use Che\HttpApiAuth\AuthorizationScheme;
+use Che\HttpApiAuth\AuthenticationScheme;
 use Che\HttpApiAuth\HttpRequest;
 use Che\HttpApiAuth\RequestToken;
 use Che\HttpApiAuth\UnsupportedTokenException;
@@ -22,7 +22,7 @@ use Che\HttpApiAuth\WrongHeaderValueException;
  * @author Kirill chEbba Chebunin <iam@chebba.org>
  * @license http://opensource.org/licenses/mit-license.php MIT
  */
-class RequestSignatureScheme implements AuthorizationScheme
+class RequestSignatureScheme implements AuthenticationScheme
 {
     const PROTOCOL_NAME = 'RequestSignature';
     const HEADER_REGEX = '/^([0-9a-z_@\.\-\=\+]+):([0-9]+):([0-9a-z\=\+]+)$/i';

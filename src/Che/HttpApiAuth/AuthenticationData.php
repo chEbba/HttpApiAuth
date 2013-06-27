@@ -10,12 +10,12 @@
 namespace Che\HttpApiAuth;
 
 /**
- * Scheme data parsed from header
+ * Scheme authentication data parsed from header
  *
  * @author Kirill chEbba Chebunin <iam@chebba.org>
  * @license http://opensource.org/licenses/mit-license.php MIT
  */
-class AuthorizationData
+class AuthenticationData
 {
     private $scheme;
     private $token;

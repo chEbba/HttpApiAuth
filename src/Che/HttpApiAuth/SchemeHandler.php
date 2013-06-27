@@ -44,12 +44,12 @@ class SchemeHandler
     }
 
     /**
-     * Add authorization scheme
+     * Add authentication scheme
      *
-     * @param AuthorizationScheme $scheme Scheme instance
+     * @param AuthenticationScheme $scheme Scheme instance
      * @param string|null         $name   Custom name. If null, scheme name will be used
      */
-    public function registerScheme(AuthorizationScheme $scheme, $name = null)
+    public function registerScheme(AuthenticationScheme $scheme, $name = null)
     {
         $this->schemes[$name ?: $scheme->getName()] = $scheme;
     }
@@ -59,7 +59,7 @@ class SchemeHandler
      *
      * @param string $name
      *
-     * @return AuthorizationScheme
+     * @return AuthenticationScheme
      * @throws \OutOfBoundsException
      */
     protected function getScheme($name)
@@ -90,11 +90,11 @@ class SchemeHandler
     }
 
     /**
-     * Parse request authorization data
+     * Parse request authentication data
      *
      * @param HttpRequest $request
      *
-     * @return AuthorizationData
+     * @return AuthenticationData
      * @throws \OutOfBoundsException
      * @throws WrongSchemeHeaderException
      * @throws HeaderNotFoundException
@@ -116,7 +116,7 @@ class SchemeHandler
                     throw new WrongSchemeHeaderException($this->credentialsHeader, 'Wrong scheme header value', $matches[1], $e);
                 }
 
-                return new AuthorizationData($matches[1], $token);
+                return new AuthenticationData($matches[1], $token);
             }
         }
 
@@ -127,14 +127,14 @@ class SchemeHandler
      * Check if request is valid for user
      *
      * @param HttpRequest       $request   Request for check
-     * @param AuthorizationData $data      Data parsed from request
+     * @param AuthenticationData $data      Data parsed from request
      * @param string            $secretKey User API secret key
      *
      * @return bool
      * @throws \OutOfBoundsException
      * @throws UnsupportedTokenException
      */
-    public function isRequestValid(HttpRequest $request, AuthorizationData $data, $secretKey)
+    public function isRequestValid(HttpRequest $request, AuthenticationData $data, $secretKey)
     {
         return $this->getScheme($data->getScheme())->isRequestValid($request, $data->getToken(), $secretKey);
     }
