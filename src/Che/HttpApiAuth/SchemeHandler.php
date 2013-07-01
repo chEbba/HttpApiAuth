@@ -27,7 +27,7 @@ namespace Che\HttpApiAuth;
 class SchemeHandler
 {
     const DEFAULT_CREDENTIALS_HEADER = 'authorization';
-    const DEFAULT_SCHEME_HEADER = 'scheme';
+    const DEFAULT_SCHEME_HEADER = 'www-authenticate';
 
     const HEADER_REGEX = '/([a-z0-9]+)\s+(.+)/i';
 
