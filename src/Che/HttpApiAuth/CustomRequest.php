@@ -39,6 +39,24 @@ class CustomRequest implements HttpRequest, \JsonSerializable, \Serializable
     }
 
     /**
+     * Create copy from request
+     *
+     * @param HttpRequest $request
+     *
+     * @return CustomRequest
+     */
+    public static function copy(HttpRequest $request)
+    {
+        return new self(
+            $request->getHost(),
+            $request->getUri(),
+            $request->getMethod(),
+            $request->getHeaders(),
+            $request->getBody()
+        );
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getHost()
