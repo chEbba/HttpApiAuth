@@ -33,7 +33,9 @@ class SchemeHandler
 
     private $credentialsHeader;
     private $schemeHeader;
+    /** @var AuthenticationScheme[] */
     private $schemes;
+    private $defaultScheme = null;
 
     public function __construct($credentialsHeader = self::DEFAULT_CREDENTIALS_HEADER,
                                 $schemeHeader = self::DEFAULT_SCHEME_HEADER)
@@ -55,6 +57,23 @@ class SchemeHandler
     }
 
     /**
+     * Set default scheme
+     *
+     * @param string|null $scheme Scheme name or null to clear default
+     *
+     * @throws \OutOfBoundsException
+     */
+    public function setDefaultScheme($scheme = null)
+    {
+        if ($scheme === null) {
+            $this->defaultScheme = null;
+        } else {
+            $this->checkScheme($scheme);
+            $this->defaultScheme = $scheme;
+        }
+    }
+
+    /**
      * Get scheme by name
      *
      * @param string $name
@@ -64,11 +83,23 @@ class SchemeHandler
      */
     protected function getScheme($name)
     {
+        $this->checkScheme($name);
+
+        return $this->schemes[$name];
+    }
+
+    /**
+     * Check if scheme registered
+     *
+     * @param string $name
+     *
+     * @throws \OutOfBoundsException
+     */
+    protected function checkScheme($name)
+    {
         if (!isset($this->schemes[$name])) {
             throw new \OutOfBoundsException(sprintf('Scheme "%s" is not registered', $name));
         }
-
-        return $this->schemes[$name];
     }
 
     /**
@@ -153,5 +184,35 @@ class SchemeHandler
         $value = $schemeObj->createResponseHeaderValue();
 
         return new HttpHeader($this->schemeHeader, trim($scheme . ' ' . $value));
+    }
+
+    /**
+     * Create header for client notification about all supported schemes
+     *
+     * @return HttpHeader
+     */
+    public function createMultiSchemeHeader()
+    {
+        $headers = [];
+        foreach ($this->schemes as $name => $scheme) {
+            $headers[$name] = $scheme->createResponseHeaderValue();
+        }
+
+        return new HttpHeader(
+            $this->schemeHeader,
+            sprintf('%s %s', implode('|', array_keys($headers)), implode('|', array_values($headers)))
+        );
+    }
+
+    /**
+     * Create scheme header for default scheme, if default scheme is not set multi-scheme header is created
+     *
+     * @return HttpHeader
+     */
+    public function createDefaultSchemeHeader()
+    {
+        return $this->defaultScheme ?
+            $this->createSchemeHeader($this->defaultScheme) :
+            $this->createMultiSchemeHeader();
     }
 }

@@ -19,6 +19,7 @@ use PHPUnit_Framework_TestCase as TestCase;
  * Test for SchemeHandler
  *
  * @author Kirill chEbba Chebunin <iam@chebba.org>
+ * @license http://opensource.org/licenses/mit-license.php MIT
  */
 class SchemeHandlerTest extends TestCase
 {
@@ -288,13 +289,81 @@ class SchemeHandlerTest extends TestCase
     }
 
     /**
+     * @test createMultiSchemeHeader creates value from imploded scheme names and header values
+     */
+    public function createMultiSchemeHeaderImplodeValues()
+    {
+        $foo = $this->createScheme('Foo');
+        $foo
+            ->expects($this->once())
+            ->method('createResponseHeaderValue')
+            ->will($this->returnValue('foo_key:foo_val'))
+        ;
+        $bar = $this->createScheme('Bar');
+        $bar
+            ->expects($this->once())
+            ->method('createResponseHeaderValue')
+            ->will($this->returnValue('bar_key:bar_val'))
+        ;
+
+        $header = $this->handler->createMultiSchemeHeader();
+
+        $this->assertEquals('scheme', $header->getName());
+        $this->assertEquals('Foo|Bar foo_key:foo_val|bar_key:bar_val', $header->getValue());
+    }
+
+    /**
+     * @test createDefaultSchemeHeader creates header for defaultScheme if set
+     */
+    public function defaultSchemeHeader()
+    {
+        $foo = $this->createScheme('Foo');
+        $foo
+            ->expects($this->any())
+            ->method('createResponseHeaderValue')
+            ->will($this->returnValue('foo_key:foo_val'))
+        ;
+        $bar = $this->createScheme('Bar');
+        $bar
+            ->expects($this->any())
+            ->method('createResponseHeaderValue')
+            ->will($this->returnValue('bar_key:bar_val'))
+        ;
+
+        $this->handler->setDefaultScheme('Foo');
+
+        $this->assertEquals($this->handler->createSchemeHeader('Foo'), $this->handler->createDefaultSchemeHeader());
+    }
+
+    /**
+     * @test createDefaultSchemeHeader creates multi-scheme header if no default scheme was set
+     */
+    public function defaultSchemeHeaderNotSet()
+    {
+        $foo = $this->createScheme('Foo');
+        $foo
+            ->expects($this->any())
+            ->method('createResponseHeaderValue')
+            ->will($this->returnValue('foo_key:foo_val'))
+        ;
+        $bar = $this->createScheme('Bar');
+        $bar
+            ->expects($this->any())
+            ->method('createResponseHeaderValue')
+            ->will($this->returnValue('bar_key:bar_val'))
+        ;
+
+        $this->assertEquals($this->handler->createMultiSchemeHeader(), $this->handler->createDefaultSchemeHeader());
+    }
+
+    /**
      * Create request mock
      *
      * @param array $headers
      *
      * @return \PHPUnit_Framework_MockObject_MockObject|HttpRequest
      */
-    protected function createRequest(array $headers = [])
+    private function createRequest(array $headers = [])
     {
         $request = $this->getMock('Che\HttpApiAuth\HttpRequest');
         $request
@@ -314,7 +383,7 @@ class SchemeHandlerTest extends TestCase
      *
      * @return \PHPUnit_Framework_MockObject_MockObject|AuthenticationScheme
      */
-    protected function createScheme($name, $customName = null)
+    private function createScheme($name, $customName = null)
     {
         $scheme = $this->getMock('Che\HttpApiAuth\AuthenticationScheme');
         $scheme
@@ -327,7 +396,7 @@ class SchemeHandlerTest extends TestCase
         return $scheme;
     }
 
-    protected function createToken()
+    private function createToken()
     {
         return $this->getMock('Che\HttpApiAuth\RequestToken');
     }
