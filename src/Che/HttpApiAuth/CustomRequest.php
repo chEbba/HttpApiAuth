@@ -13,6 +13,7 @@ namespace Che\HttpApiAuth;
  * HTTP Request with custom properties
  *
  * @author Kirill chEbba Chebunin <iam@chebba.org>
+ * @license http://opensource.org/licenses/mit-license.php MIT
  */
 class CustomRequest implements HttpRequest, \JsonSerializable, \Serializable
 {
